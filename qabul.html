@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <title>Qabulga yozilish</title>
+  <style>
+.body{
+      font-family: Arial, sans-serif;
+      display: flex;
+      background: #f7f9fc;
+      justify-content: center;
+      align-items: center;
+      height: 30vh;
+      margin: auto;
+    }
+
+    .form-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      max-width: 400px;
+      
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      color: #444;
+      font-weight: bold;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      margin-top: 20px;
+      border: none;
+      border-radius: 6px;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+
+    .success, .error {
+      text-align: center;
+      margin-top: 15px;
+      font-weight: bold;
+    }
+
+    .success { color: green; }
+    .error { color: red; }
+  </style>
+</head>
+<body>
+<header class="container header">
+    <section class="header__section">
+      <div class="logo">
+        <a class="logoclass" href="index.html">Dr.Shoqosimova</a>
+      </div>
+
+      <!-- 🔹 Hamburger icon -->
+      <div class="menu-icon" id="menu-icon">
+        ☰
+      </div>
+
+      <nav class="a_btns" id="nav-menu">
+        <a href="./index.html">Bosh sahifa</a>
+        <a href="../xizmatlar.html">Xizmatlar</a>
+        <a href="../ijtimoiytarmoqlar.html">Ijtimoiy tarmoqlar</a>
+        
+        <a class="btns" href="./qabul.html">Qabul</a>
+      </nav>
+    </section>
+  </header>
+  <div class="body  form-container">
+    <h2>Qabulga yozilish</h2>
+    <form id="orderForm">
+      <label>Ismingiz:</label>
+      <input type="text" id="name" placeholder="Ismingizni kiriting" required>
+
+      <label>Telefon raqam:</label>
+      <input type="tel" id="phone" placeholder="+998 90 123 45 67" required>
+
+      <label>Xizmat turi:</label>
+      <select id="service" required>
+        <option value="">Tanlang...</option>
+        <option value="Masaj(bolalar va ayollar)">Masaj</option>
+        <option value="Xijoma">Xijoma</option>
+        <option value="Pediatr terapevt">pediatr terapevt</option>
+        <option value="Zuluk">Zuluk(izohga zuluk sonini yozib keting iltimos)</option>
+      </select>
+
+      <label>Qabul sanasi:</label>
+      <input type="date" id="date" required>
+
+      <label>Qo‘shimcha izoh:</label>
+      <textarea id="message" rows="3" placeholder="Xohlasangiz izoh yozing..."></textarea>
+
+      <button type="submit">Yuborish</button>
+      <div id="response"></div>
+    </form>
+  </div>
+
+  <script>
+    // 🟢 Sizning bot ma'lumotlaringiz
+    const BOT_TOKEN = "7762668835:AAHOl5zYpNhD_ywYZBx4E4KMxck8BCA1UmE";
+    const CHAT_ID = "6814831560";
+    const API_URL = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
+
+    document.getElementById("orderForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const phone = document.getElementById("phone").value;
+      const service = document.getElementById("service").value;
+      const date = document.getElementById("date").value;
+      const message = document.getElementById("message").value;
+      const responseDiv = document.getElementById("response");
+
+      const text = `
+📋 <b>Yangi qabul so‘rovi:</b>\n
+👤 Ism: ${name}
+📞 Telefon: ${phone}
+💆‍♀️ Xizmat: ${service}
+📅 Sana: ${date}
+📝 Izoh: ${message || 'Yo‘q'}
+`;
+
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            chat_id: CHAT_ID,
+            text: text,
+            parse_mode: "HTML"
+          }),
+        });
+
+        if (response.ok) {
+          responseDiv.innerHTML = "<p class='success'>✅ So‘rovingiz yuborildi!</p>";
+          e.target.reset();
+        } else {
+          responseDiv.innerHTML = "<p class='error'>❌ Xatolik yuz berdi. Qayta urinib ko‘ring.</p>";
+        }
+      } catch (error) {
+        responseDiv.innerHTML = "<p class='error'>⚠️ Internet yoki server bilan muammo bor.</p>";
+      }
+    });
+  </script>
+</body>
+</html>
